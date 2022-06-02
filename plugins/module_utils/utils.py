@@ -34,3 +34,17 @@ def intersection(first_obj, second_obj):
             if intersection(item, second_obj):
                 return True
     return False
+
+def strip_extra_attrs_from_status(status, spec):
+    for k, v in status.copy().items():
+        if k not in spec:
+            status.pop(k)
+        elif isinstance(v, dict):
+            strip_extra_attrs_from_status(status[k], spec[k])
+        elif isinstance(v, list) and v and isinstance(v[0], dict):
+            for i in range(len(v)):
+                try:
+                    strip_extra_attrs_from_status(status[k][i], spec[k][i])
+                except IndexError:
+                    status[k] = spec[k]
+                    break
